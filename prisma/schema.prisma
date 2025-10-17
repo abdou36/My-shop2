@@ -56,16 +56,16 @@ model User {
 }
 
 model Order {
-  id         Int      @id @default(autoincrement())
-  userId     Int
-  productId  Int
-  status     String   @default("pending") // pending | paid | delivered | failed
-  total      Decimal  @db.Decimal(10,2)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id         String   @id @default(uuid())
+  userId     String
+  productId  String
+  codeId     String
+
   user       User     @relation(fields: [userId], references: [id])
   product    Product  @relation(fields: [productId], references: [id])
+  code       ProductCode @relation(fields: [codeId], references: [id])
 }
+
 
 model ReportSchedule {
   id            Int      @id @default(autoincrement())
