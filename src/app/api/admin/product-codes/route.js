@@ -1,9 +1,19 @@
-import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { createClient } from '@supabase/supabase-js'
+import { NextResponse } from 'next/server'
+
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_ANON_KEY!
+)
 
 export async function GET() {
-  const codes = await prisma.productCode.findMany({
-    include: { product: true },
-  });
-  return NextResponse.json(codes);
+  const { data, error } = await supabase
+    .from('ProductCode')
+    .select('id, code, product(name)')
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+
+  return NextResponse.json(data)
 }
