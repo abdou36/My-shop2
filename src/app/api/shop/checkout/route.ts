@@ -32,12 +32,13 @@ export async function POST(req: Request) {
   })
 
   await prisma.order.create({
-    data: {
-      user: { connect: { id: body.userId } },
-      product: { connect: { id: productId } },
-      code: { connect: { id: code.id } },
-    },
-  })
+  data: {
+    userId: body.userId,
+    productId: productId,
+    codeId: code.id,
+  },
+})
+
 
   return NextResponse.json({ code: code.code })
 }
