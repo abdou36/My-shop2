@@ -1,26 +1,34 @@
-import { prisma } from "@/lib/prisma";
-import Link from "next/link";
+'use client'
 
-export default async function Home() {
-  const products = await prisma.product.findMany({
-    where: { active: true },
-    orderBy: { createdAt: "desc" },
-  });
+import { useEffect, useState } from 'react'
+
+type Product = {
+  id: string
+  name: string
+  description: string
+}
+
+export default function HomePage() {
+  const [products, setProducts] = useState<Product[]>([])
+
+  useEffect(() => {
+    // جلب المنتجات من Supabase
+    fetch('/api/products') // أو استخدم Supabase Client مباشرة
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+  }, [])
 
   return (
-    <main className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">🛒 متجر البطاقات الرقمية</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {products.map((p) => (
-          <Link key={p.id} href={`/product/${p.id}`} className="border rounded p-4 bg-white shadow hover:shadow-md transition">
-            <h3 className="font-semibold">{p.name}</h3>
-            <p className="text-sm text-slate-600">{p.description}</p>
-            <p className="mt-2 font-bold">{p.price.toString()} دج</p>
-            <p className="text-xs mt-1">المخزون: {p.stock}</p>
-          </Link>
+    <main className="p-6">
+      <h1 className="text-2xl font-bold mb-6">قائمة المنتجات</h1>
+      <div className="grid md:grid-cols-3 gap-4">
+        {products.map((product) => (
+          <div key={product.id} className="border rounded p-4">
+            <h3 className="font-bold">{product.name}</h3>
+            <p className="text-slate-600">{product.description}</p>
+          </div>
         ))}
       </div>
     </main>
-  );
+  )
 }
-  
